@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    match /players/{player} {
+      allow create: if request.auth.uid != null;
+    }
+    match /answers/{answer} {
+      allow create: if request.auth.uid != null;
+    }
+    match /rooms/{room} {
+      allow read: if request.auth.uid != null;
+    }
+    match /playerQuestions/{question} {
+      allow read: if get(/databases/$(database)/documents/players/$(resource.data.playerId)).data.userId == request.auth.uid;
+    }
+    match /records/{record} {
+      allow read: if request.auth.uid != null;
+    }
+    match /quizzes/{quiz} {
+      // allow read, write: if request.auth.token.admin == true;
+      allow read, write: if request.auth.uid != null;
+    }
+    match /questions/{question} {
+      // allow read, write: if request.auth.token.admin == true;
+      allow read, write: if request.auth.uid != null;
+    }
+  }
+}
